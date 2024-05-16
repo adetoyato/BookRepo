@@ -140,8 +140,12 @@ public class Program
         // Generic Dictionary for student data
         Dictionary<string, Student> studentData = new Dictionary<string, Student>
         {
-            { "A001", new Student("Alice", 85) },
-            { "B002", new Student("Bob", 92) }
+            { 
+                "A001", new Student("Alice", 85) 
+            },
+            { 
+                "B002", new Student("Bob", 92) 
+            }
         };
 
         foreach (var kvp in studentData)
