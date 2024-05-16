@@ -17,7 +17,7 @@ public class Program
             try
             {
                 book1.Title = Console.ReadLine();
-                break; //exit if conditions are met
+                break; // exit if conditions are met
             }
             catch (ArgumentException e)
             {
@@ -32,7 +32,7 @@ public class Program
             try
             {
                 book1.Author = Console.ReadLine();
-                break; //exit if conditions are met
+                break; // exit if conditions are met
             }
             catch (ArgumentException e)
             {
@@ -47,7 +47,7 @@ public class Program
             try
             {
                 book1.Pages = int.Parse(Console.ReadLine());
-                break; //exit if conditions are met
+                break; // exit if conditions are met
             }
             catch (Exception e) when (e is FormatException || e is ArgumentException)
             {
@@ -67,14 +67,12 @@ public class Program
             if (string.IsNullOrWhiteSpace(genre))
             {
                 Console.WriteLine("You have not entered anything! Please enter genre again.");
-                Thread.Sleep(1000);
                 continue;
             }
 
             if (genre.Any(char.IsDigit))
             {
                 Console.WriteLine("You've inputted a number. Please enter a valid genre.");
-                Thread.Sleep(1000);
                 continue;
             }
 
@@ -101,7 +99,7 @@ public class Program
             try
             {
                 book1.Publisher = Console.ReadLine();
-                break; //exit if conditions are met
+                break; // exit if conditions are met
             }
             catch (ArgumentException e)
             {
@@ -109,14 +107,14 @@ public class Program
             }
         } while (true);
 
-        // validate isbn
+        // validate ISBN
         do
         {
             Console.Write("ISBN (Format: 123-4-56-7891011-1): ");
             try
             {
                 book1.ISBN = Console.ReadLine();
-                break; //exit if conditions are met
+                break; // exit if conditions are met
             }
             catch (ArgumentException e)
             {
@@ -124,28 +122,48 @@ public class Program
             }
         } while (true);
 
-        // file reader
+        // display information entered
         string filePath = "book1.txt";
         book1.WriteToFile(filePath);
         Book readBook = Book.ReadFromFile(filePath);
-        Console.WriteLine($"Read book from file:\nTitle: {readBook.Title}\nAuthor: {readBook.Author}\n");
+        Console.WriteLine($"Read book from file:\nTitle: {readBook.Title}\nAuthor: {readBook.Author}\nPages: {readBook.Pages}\nPublisher: {readBook.Publisher}\nISBN: {readBook.ISBN}\n");
 
-        // email addresses
-        Console.WriteLine("Enter a text to extract emails from:");
-        string text = Console.ReadLine();
-        var emails = EmailExtractor.ExtractEmails(text);
-        Console.WriteLine("Extracted Emails:");
-        emails.ForEach(Console.WriteLine);
+        // email address input
+        List<string> emails = new List<string>();
+        Console.WriteLine("Enter email addresses (type 'okay' to finish):");
+        do
+        {
+            Console.Write("Email: ");
+            string email = Console.ReadLine();
+            if (email.ToLower() == "okay")
+                break;
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                Console.WriteLine("Email cannot be empty or whitespace.");
+                continue;
+            }
+
+            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+            {
+                Console.WriteLine("Invalid email format. Please enter a valid email.");
+                continue;
+            }
+
+            emails.Add(email);
+        } while (true);
+
+        Console.WriteLine("Entered Email Addresses:");
+        foreach (var email in emails)
+        {
+            Console.WriteLine(email);
+        }
 
         // student data
         Dictionary<string, Student> studentData = new Dictionary<string, Student>
         {
-            { 
-                "A001", new Student("Alice", 85) 
-            },
-            { 
-                "B002", new Student("Bob", 92) 
-            }
+            { "A001", new Student("Alice", 85) },
+            { "B002", new Student("Bob", 92) }
         };
 
         foreach (var kvp in studentData)
@@ -169,12 +187,9 @@ public class Book
         genres = new List<string>();
     }
 
-    public string Title //displays when there is no input in title
+    public string Title //displays if the title is invalid or empty
     {
-        get 
-        { 
-            return title; 
-        }
+        get { return title; }
         set
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -183,12 +198,9 @@ public class Book
         }
     }
 
-    public string Author //displays when there is no author input
+    public string Author //displays if the author entered is empty
     {
-        get 
-        { 
-            return author; 
-        }
+        get { return author; }
         set
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -197,12 +209,9 @@ public class Book
         }
     }
 
-    public int Pages //displays when the input for pages is invalid (negative number, empty space)
+    public int Pages //displays if the pages entered is either empty or invalid (eg. negative integers)
     {
-        get 
-        { 
-            return pages; 
-        }
+        get { return pages; }
         set
         {
             if (value <= 0)
@@ -211,12 +220,9 @@ public class Book
         }
     }
 
-    public List<string> Genres //displays if genre is empty
+    public List<string> Genres //displays if the genre is invalid or empty
     {
-        get 
-        { 
-            return genres; 
-        }
+        get { return genres; }
     }
 
     public void AddGenre(string genre)
@@ -226,7 +232,7 @@ public class Book
         genres.Add(genre);
     }
 
-    public string Publisher //displays if publisher is empty
+    public string Publisher //displays if the publisher is invalid or empty
     {
         get { return publisher; }
         set
@@ -237,7 +243,7 @@ public class Book
         }
     }
 
-    public string ISBN //displays if isbn format is not met
+    public string ISBN //displays if the isbn does not follow the proper format or if it is empty
     {
         get { return isbn; }
         set
@@ -248,7 +254,7 @@ public class Book
         }
     }
 
-    public void WriteToFile(string filePath) //displays entered information
+    public void WriteToFile(string filePath) //writes to filepath
     {
         using (StreamWriter writer = new StreamWriter(filePath))
         {
@@ -261,7 +267,7 @@ public class Book
         }
     }
 
-    public static Book ReadFromFile(string filePath) //reads entered information
+    public static Book ReadFromFile(string filePath) //reads data in filepath
     {
         using (StreamReader reader = new StreamReader(filePath))
         {
@@ -278,7 +284,7 @@ public class Book
     }
 }
 
-public class EmailExtractor //looks for the email
+public class EmailExtractor //validates email input by the user
 {
     public static List<string> ExtractEmails(string text)
     {
@@ -294,7 +300,7 @@ public class EmailExtractor //looks for the email
     }
 }
 
-public class Student //gets student
+public class Student //gets student data
 {
     public string Name { get; set; }
     public int Grade { get; set; }
